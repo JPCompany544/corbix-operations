@@ -315,7 +315,7 @@ function CtaButton({ id, label = "Start Verification", variant = "primary" }: { 
     ? `${base} bg-white text-blue-800 hover:bg-blue-50`
     : `${base} bg-blue-700 hover:bg-blue-800 text-white`;
   return (
-    <Link href="https://funding-interview.vercel.app/" id={id} className={styles}>
+    <Link href="https://funding.corbixmarket.com" id={id} className={styles}>
       {label}
       <ArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />
     </Link>
@@ -406,7 +406,7 @@ export default function LandingPage() {
           </div>
 
           <Link
-            href="https://funding-interview.vercel.app/"
+            href="https://funding.corbixmarket.com"
             id="nav-start-verification"
             className="btn-primary inline-flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors duration-200"
           >
@@ -890,7 +890,7 @@ export default function LandingPage() {
                 <h4 className="text-white font-semibold text-sm mb-3 uppercase tracking-wider">Application</h4>
                 <ul className="space-y-2">
                   {[
-                    { label: "Start Verification", href: "https://funding-interview.vercel.app/" },
+                    { label: "Start Verification", href: "https://funding.corbixmarket.com" },
                     { label: "Requirements", href: "#security" },
                     { label: "Verification Process", href: "#howitworks" },
                     { label: "FAQ", href: "#faq" }

@@ -377,6 +377,18 @@ export default function LandingPage() {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    // 5. Trigger the tracker once when the page loads
+    // 6. The system must run silently
+    fetch("/api/visitor", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ page: window.location.pathname }),
+    }).catch(() => {
+      // Fail silently
+    });
+  }, []);
+
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
 

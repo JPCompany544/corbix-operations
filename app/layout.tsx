@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import TawkToScript from "./TawkToScript";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -38,8 +39,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
-      <body className={`${inter.variable} antialiased`}>{children}</body>
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
+      <body className={`${inter.variable} antialiased`} suppressHydrationWarning>
+        <TawkToScript />
+        {children}
+      </body>
     </html>
   );
 }

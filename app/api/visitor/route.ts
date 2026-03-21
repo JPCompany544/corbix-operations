@@ -46,22 +46,26 @@ export async function POST(req: NextRequest) {
 
     // 3. Send a POST request to the Telegram Bot API
     const botToken = process.env.TELEGRAM_BOT_TOKEN;
-    const chatId = process.env.TELEGRAM_CHAT_ID;
+    const chatIds = process.env.TELEGRAM_CHAT_ID?.split(",");
 
-    if (!botToken || !chatId) {
+    if (!botToken || !chatIds || chatIds.length === 0) {
       console.warn("TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID is missing");
     } else {
       const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
       const text = `New Visitor\n\nIP: ${ip}\nCountry: ${country}\nDevice: ${device}\nPage: ${page}\nTime: ${time}`;
 
-      await fetch(telegramUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text: text,
-        }),
-      });
+      await Promise.all(
+        chatIds.map(id => 
+          fetch(telegramUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              chat_id: id.trim(),
+              text: text,
+            }),
+          })
+        )
+      );
     }
 
     // 8. Return a success JSON response

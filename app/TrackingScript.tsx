@@ -5,7 +5,7 @@ import Script from "next/script";
 /**
  * Antigravity Tracking Script
  * 1. Implements first-touch source attribution via localStorage.
- * 2. Tracks main CTA clicks (Apply/Continue) and sends alerts to Telegram.
+ * 2. Tracks main CTA clicks (Apply/Continue) and routes alerts to secure backend.
  */
 export default function TrackingScript() {
   return (
@@ -43,24 +43,22 @@ export default function TrackingScript() {
               var text = (target.innerText || target.textContent || "").trim();
               var id = target.id || "";
               
-              // Target CTA patterns: "Apply", "Continue", "Verification", or navigation IDs
               var isCTA = /Apply|Continue|Verification/i.test(text) || /-start-verification/.test(id);
 
               if (isCTA) {
                 var source = window.getSource();
-                var payload = {
-                  chat_id: "8192355959",
-                  text: "New Lead:\\nSource: " + source + "\\nPage: " + window.location.href + "\\nTime: " + new Date().toISOString()
-                };
-
-                // Send to Telegram (Silent & Non-blocking)
-                fetch("https://api.telegram.org/bot8671064366:AAHEvkrnIzQr015lnGnoZrXk95wZ-KD0F2M/sendMessage", {
+                
+                // Secure Backend Notification (Routing handled server-side)
+                fetch("/api/track", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify(payload),
+                  body: JSON.stringify({
+                    source: source,
+                    page: window.location.href
+                  }),
                   keepalive: true
                 }).catch(function() {
-                  // Fails silently
+                  // Silent fail
                 });
               }
             }, true);

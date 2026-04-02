@@ -5,34 +5,41 @@ export async function POST(req: NextRequest) {
     const { source, page } = await req.json();
 
     if (!source) {
-      return NextResponse.json({ error: "Source is required" }, { status: 400 });
+      return NextResponse.json({ success: true, message: "No source provided" });
     }
 
-    let token = "";
+    const normalizedSource = source?.toLowerCase().trim();
+
+    console.log("Incoming source:", source);
+    console.log("Normalized source:", normalizedSource);
+    console.log("Routing to:", normalizedSource.startsWith("fb") ? "FB" : normalizedSource.startsWith("yt") ? "YT" : "NONE");
+
+    let botToken = "";
     let chatId = "";
 
-    // Route based on source
-    if (source.toLowerCase().startsWith("fb")) {
-      token = process.env.FB_BOT_TOKEN || "";
+    if (normalizedSource.startsWith("fb")) {
+      botToken = process.env.FB_BOT_TOKEN || "";
       chatId = process.env.FB_CHAT_ID || "";
-    } else if (source.toLowerCase().startsWith("yt")) {
-      token = process.env.YT_BOT_TOKEN || "";
+    } else if (normalizedSource.startsWith("yt")) {
+      botToken = process.env.YT_BOT_TOKEN || "";
       chatId = process.env.YT_CHAT_ID || "";
     } else {
-      return NextResponse.json({ message: "Source ignored" });
+      return NextResponse.json({ success: true, message: "Source ignored" });
     }
 
-    if (!token || !chatId) {
-      return NextResponse.json({ error: "Bot credentials missing" }, { status: 500 });
+    if (!botToken || !chatId) {
+      return NextResponse.json({ success: true, message: "Bot credentials missing" });
     }
 
-    // Prepare Lead Notification
-    const text = `New Lead:\nSource: ${source}\nPage: ${page}\nTime: ${new Date().toISOString()}`;
+    const text = `New Lead:\nSource: ${normalizedSource}\nPage: ${page}\nTime: ${new Date().toISOString()}`;
 
-    const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ chat_id: chatId, text }),
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: text,
+      }),
     });
 
     if (!res.ok) {

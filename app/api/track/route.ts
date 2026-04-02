@@ -31,20 +31,21 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true, message: "Bot credentials missing" });
     }
 
+    const chatIds = chatId.split(",").map((id) => id.trim()).filter(Boolean);
     const text = `New Lead:\nSource: ${normalizedSource}\nPage: ${page}\nTime: ${new Date().toISOString()}`;
 
-    const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: text,
-      }),
-    });
-
-    if (!res.ok) {
-      throw new Error(`Telegram API Error: ${res.statusText}`);
-    }
+    await Promise.all(
+      chatIds.map((id) =>
+        fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: id,
+            text: text,
+          }),
+        })
+      )
+    );
 
     return NextResponse.json({ success: true });
   } catch (error) {

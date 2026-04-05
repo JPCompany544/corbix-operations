@@ -48,6 +48,17 @@ export default function TrackingScript() {
               if (isCTA) {
                 var source = window.getSource();
                 
+                // Append source to the URL of the link before the browser navigates
+                if (target.tagName.toLowerCase() === "a" && target.href) {
+                  try {
+                    var url = new URL(target.href);
+                    if (!url.searchParams.has("src") && source !== "direct") {
+                      url.searchParams.set("src", source);
+                      target.href = url.toString();
+                    }
+                  } catch (err) {}
+                }
+                
                 // Secure Backend Notification (Routing handled server-side)
                 fetch("/api/track", {
                   method: "POST",
